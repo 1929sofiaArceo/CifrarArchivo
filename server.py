@@ -1,6 +1,7 @@
 import socket
 import nacl.secret
 import nacl.utils
+from nacl.signing import SigningKey
 from Crypto.Cipher import AES
 
 SIZE = 1024
@@ -17,7 +18,15 @@ encryptedFile = open("encrypedFile.bin", "wb")
 encryptedFile.close()
 print("Encoding file")
 print(cipher_text)
+print("Tag")
 print(tag)
+signingKey = SigningKey.generate() # Generamos un random signing key
+signedFile = signingKey.sign(cipher_text) # Firmamos archivo encriptado con el signing key
+print("Signed File...")
+print(signedFile)
+verify_key = signingKey.verify_key
+print("Vericicando firma")
+print(verify_key)
 print("Decoding file...")
 file = open("encrypedFile.bin", "rb")
 nonce, tag, ciphertext = [file.read(x) for x in (16, 16, -1)]
